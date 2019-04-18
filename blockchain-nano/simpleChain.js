@@ -32,8 +32,8 @@ setTimeout(function () {
 /***********************************************
  ** Function to get the Height of the Chain ****
  ***********************************************/
-
 /*
+
 // Be careful this only will work if `getBlockHeight` method in Blockchain.js file return a Promise
 myBlockChain.getBlockHeight().then((height) => {
 	console.log(height);
@@ -54,8 +54,8 @@ myBlockChain.getBlock(2).then((block) => {
 /***********************************************
  ***************** Validate Block  *************
  ***********************************************/
-/*
 
+/*
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
 myBlockChain.validateBlock(2).then((valid) => {
 	console.log(valid);
@@ -67,7 +67,7 @@ myBlockChain.validateBlock(2).then((valid) => {
 
 /** Tampering a Block this is only for the purpose of testing the validation methods */
 /*
-myBlockChain.getBlock(5).then((block) => {
+myBlockChain.getBlock(10).then((block) => {
 	let blockAux = block;
 	blockAux.body = "Tampered Block";
 	myBlockChain._modifyBlock(blockAux.height, blockAux).then((blockModified) => {
@@ -102,6 +102,7 @@ myBlockChain.getBlock(6).then((block) => {
 
 
 // Be careful this only will work if `validateChain` method in Blockchain.js file return a Promise
+
 myBlockChain.validateChain().then((errorLog) => {
 	if(errorLog.length > 0){
 		console.log("The chain is not valid:");

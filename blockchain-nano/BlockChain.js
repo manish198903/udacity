@@ -21,7 +21,7 @@ class Blockchain {
         // Add your code here
         let self = this;
         this.getBlockHeight().then((height) => {
-            if(0 == height){
+            if(0 > height){
                 self.addBlock(new Block.Block("First block in the chain - Genesis block")).then(function(data){
                     console.log("Genesis block added to the chain");
                 });
@@ -33,7 +33,7 @@ class Blockchain {
     // Get block height, it is a helper method that return the height of the blockchain
     getBlockHeight() {
         // Add your code here
-        return this.db.getBlocksCount();
+        return this.db.getBlocksCount().then((count) => {return count - 1;});
     }
 
     // Add new block
@@ -45,19 +45,19 @@ class Blockchain {
         return new Promise(function(resolve, reject){
             block.time = new Date().getTime().toString().slice(0,-3);
             self.getBlockHeight().then((height) => {
-                block.height = height;
+                block.height = height+1;
                 
-                if(height > 0) {
-                    self.getBlock(height-1).then((prevBlock) => {
+                if(block.height > 0) {
+                    self.getBlock(block.height-1).then((prevBlock) => {
                         block.previousBlockHash = prevBlock.hash;
                         block.hash = SHA256(JSON.stringify(block)).toString();
-                        self.db.addLevelDBData(height, JSON.stringify(block).toString()).then((blockAdded) => {
+                        self.db.addLevelDBData(block.height, JSON.stringify(block).toString()).then((blockAdded) => {
                             resolve(blockAdded);
                         }).catch((err) => { console.log(err); reject(err)});
                     });
                 } else {
                     block.hash = SHA256(JSON.stringify(block)).toString();
-                    self.db.addLevelDBData(height, JSON.stringify(block).toString()).then((blockAdded) => {
+                    self.db.addLevelDBData(block.height, JSON.stringify(block).toString()).then((blockAdded) => {
                         resolve(blockAdded);
                     }).catch((err) => { console.log(err); reject(err)});
                 }                
@@ -115,9 +115,10 @@ class Blockchain {
         let self = this;  
         let promises = [];
         return self.getBlockHeight().then((height) => {
-                for(let i=0; i<height-1; i++) {
+                for(let i=0; i<height; i++) {
                     promises.push(self._validateBlockWithNext(i));                    
                 }
+                promises.push(self.validateBlock(height));
                 return Promise.all(promises);
             }).then((log) => {
                 let errorLog = [];
