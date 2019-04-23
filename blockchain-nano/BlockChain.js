@@ -6,7 +6,7 @@ const SHA256 = require('crypto-js/sha256');
 const LevelSandbox = require('./LevelSandbox.js');
 const Block = require('./Block.js');
 
-class Blockchain {
+class BlockChain {
 
     constructor() {
         this.db = new LevelSandbox.LevelSandbox();
@@ -52,13 +52,13 @@ class Blockchain {
                         block.previousBlockHash = prevBlock.hash;
                         block.hash = SHA256(JSON.stringify(block)).toString();
                         self.db.addLevelDBData(block.height, JSON.stringify(block).toString()).then((blockAdded) => {
-                            resolve(blockAdded);
+                            resolve(block);
                         }).catch((err) => { console.log(err); reject(err)});
                     });
                 } else {
                     block.hash = SHA256(JSON.stringify(block)).toString();
                     self.db.addLevelDBData(block.height, JSON.stringify(block).toString()).then((blockAdded) => {
-                        resolve(blockAdded);
+                        resolve(block);
                     }).catch((err) => { console.log(err); reject(err)});
                 }                
                 
@@ -146,4 +146,4 @@ class Blockchain {
    
 }
 
-module.exports.Blockchain = Blockchain;
+module.exports.BlockChain = BlockChain;
