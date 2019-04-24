@@ -70,11 +70,35 @@ class BlockChain {
                 
     }
 
-    // Get Block By Height
+    // Get Block by height
     getBlock(height) {
         // Add your code here
         let self = this;
         return self.db.getLevelDBData(height).then((str_block) => { return JSON.parse(str_block);});
+    }
+
+    // Get Block by hash
+    getBlockByHash(hash) {
+        // Add your code here
+        let self = this;
+        return self.db.getLevelDBDataByKV("hash", hash).then((blocks) => { 
+            if(blocks.length > 1) {
+                console.log("This should never happen");
+                return null;
+            } else if (blocks.length == 0) {
+                return null;
+            }
+            return JSON.parse(blocks[0]);
+        });
+    }
+
+    // Get Block by key value
+    getBlocksByKV(key, value) {
+        // Add your code here
+        let self = this;
+        return self.db.getLevelDBDataByKV(key, value).then((blocks) => { 
+            return blocks.map(x => JSON.parse(x));
+        });
     }
 
     // Validate if Block is being tampered by Block Height

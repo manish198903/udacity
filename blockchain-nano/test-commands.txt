@@ -1,0 +1,27 @@
+curl -X POST \
+  http://localhost:8000/requestValidation \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "address":"19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY"
+}'
+
+curl -X POST \
+  http://localhost:8000/message-signature/validate \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+"address":"19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+ "signature":"H7rnz3k6fr5WydXgUBNLygcbJ+/PFtkQo53SZ5e7gOI7Pw6ddPB61yMbzLxYiM5bnRWoHrLf/ukfuwnx/4YVIUM="
+}'
+
+curl -X POST \
+  http://localhost:8000/block \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '@star.txt'
+
+
+curl http://localhost:8000/stars/hash:b4eaa6fd4b1dfce5b90e5569a9d8076d00038e68d00b9daca9ee85c1cccbc90c
+
+curl http://localhost:8000/stars/address:19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY

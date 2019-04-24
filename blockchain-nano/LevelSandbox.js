@@ -23,6 +23,35 @@ class LevelSandbox {
         });
     }
 
+    // Get data from levelDB by a specific key value combo (Promise)
+    getLevelDBDataByKV(key, value) {
+        let self = this;
+        let blocks = [];
+
+        //assume simple keys
+        let keyParts = key.split(".");
+
+        return new Promise(function(resolve, reject){
+            // Add your code here, remember in Promises you need to resolve() or reject()
+            self.db.createReadStream().on('data', function(data) {
+
+                let currentValue = JSON.parse(data.value);                
+
+                for(var i=0; i<keyParts.length; i++) {
+                    currentValue = currentValue[keyParts[i]]; 
+                    if(!currentValue) return;
+                }
+                if(currentValue === value){
+                    blocks.push(data.value);
+                }
+              }).on('error', function(err) {
+                reject(err);
+              }).on('close', function() {
+                resolve(blocks);
+              });
+        });
+    }
+
     // Add data to levelDB with key and value (Promise)
     addLevelDBData(key, value) {
         let self = this;

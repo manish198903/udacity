@@ -1,6 +1,7 @@
-# Project #3. Private Blockchain with API
+# Project #4. Private Blockchain with API and Notary
 
-This is Project 3, Private Blockchain, in this project I created an API to provide over the network access to my private block chain.
+This is Project 4, Private Blockchain, in this project I created an API to provide over the network access to my private block chain.
+The API also contains methods for digitally notarizing content.
 
 
 ## Setup project for Review.
@@ -15,45 +16,193 @@ To setup the project for review do the following:
 
 ### Endpoints with associated responses
 
-*GET /block/:blockHeight*
+*POST /requestValidation*
 
-curl -v "http://localhost:8000/block/0"
+```
+curl -X POST \
+  http://localhost:8000/requestValidation \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+    "address":"19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY"
+}'
+```
+Reponse:
+```
+{
+  "walletAddress": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+  "requestTimestamp": "1556131306",
+  "message": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY:1556131306:starRegistry",
+  "validationWindow": 300
+}
+```
+
+*POST /message-signature/validate*
+
+```
+curl -X POST \
+  http://localhost:8000/message-signature/validate \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{
+"address":"19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+"signature":"IJ6fN9yrvMF/k3Vou6sjMOIEA34I4DB7A0ceSTZ+oRfOILHeIqVZBhZ01U8+z4STxX+F11J53gcbUFaHVKK7Jg0="
+}'
+```
 
 Reponse:
 ```
 {
-  "hash": "2b55be9ce528c761962d3f54086f2e0475a0275f3365b1e0bff24378e0113327",
-  "height": 0,
-  "body": "First block in the chain - Genesis block",
-  "time": "1555963598",
-  "previousBlockHash": ""
+  "registerStar": true,
+  "status": {
+    "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+    "requestTimestamp": "1556131306",
+    "message": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY:1556131306:starRegistry",
+    "validationWindow": 1714,
+    "messageSignature": true
+  }
 }
 ```
 
 *POST /block*
 
-curl "http://localhost:8000/block" -d '{"body": 1234}'  -H "Content-Type: application/json" -v
+```
+curl -X POST \
+  http://localhost:8000/block \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '@star.txt'
+```
+
 
 Reponse:
 ```
 {
-  "hash": "cb5656574278bbf4fed4eb61f7e1f7941e261a64ec9cf12cdba2b116a1d902a1",
-  "height": 4,
-  "body": 1234,
-  "time": "1555970033",
-  "previousBlockHash": "4af29dca67f909c9eb7d91c5703219e9a99a0a4b131297386457c718c462e794"
+  "hash": "0e7e1cefd682890bad8c3f403b037d4d8ba7d94d9be26a5094b1a181c716e269",
+  "height": 3,
+  "body": {
+    "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+    "star": {
+      "dec": "68° 52' 56.9",
+      "ra": "16h 29m 1.0s",
+      "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
+      "storyDecoded": "Found star using https://www.google.com/sky/"
+    }
+  },
+  "time": "1556131505",
+  "previousBlockHash": "b4eaa6fd4b1dfce5b90e5569a9d8076d00038e68d00b9daca9ee85c1cccbc90c"
 }
 ```
 
-### Errors
- - Invalid block number on the GET endpoint will return an error
-   - curl -v "http://localhost:8000/block/-1"
-   - curl -v "http://localhost:8000/block/test"
+*GET /stars/hash:hash*
 
- - Input payload on the POST endpoint must have the 'body' key with some payload
-   - curl "http://localhost:8000/block" -d '{"key1":"value1", "data": 1234}'  -H "Content-Type: application/json" -v
-   - curl "http://localhost:8000/block" -d '{"body": ""}'  -H "Content-Type: application/json" -v
+```
+curl http://localhost:8000/stars/hash:b4eaa6fd4b1dfce5b90e5569a9d8076d00038e68d00b9daca9ee85c1cccbc90c
+```
+
+Reponse:
+```
+{
+  "hash": "b4eaa6fd4b1dfce5b90e5569a9d8076d00038e68d00b9daca9ee85c1cccbc90c",
+  "height": 2,
+  "body": {
+    "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+    "star": {
+      "dec": "68° 52' 56.9",
+      "ra": "16h 29m 1.0s",
+      "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
+      "storyDecoded": "Found star using https://www.google.com/sky/"
+    }
+  },
+  "time": "1556128162",
+  "previousBlockHash": "c9b900642693781c1a29be18c889a275e6c2b4f090bcd72b8a4a47cb02ad655e"
+}
+```
+
+*GET /stars/address:address*
+
+```
+curl http://localhost:8000/stars/address:19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY
+```
+
+Reponse:
+```
+[
+  {
+    "hash": "c9b900642693781c1a29be18c889a275e6c2b4f090bcd72b8a4a47cb02ad655e",
+    "height": 1,
+    "body": {
+      "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+      "star": {
+        "dec": "68\u00b0 52' 56.9",
+        "ra": "16h 29m 1.0s",
+        "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
+        "storyDecoded": "Found star using https:\/\/www.google.com\/sky\/"
+      }
+    },
+    "time": "1556127968",
+    "previousBlockHash": "e2aabc11e76970ffef2264f62f5161c7b1051f249a5f33be844837b7f9d83bd4"
+  },
+  {
+    "hash": "b4eaa6fd4b1dfce5b90e5569a9d8076d00038e68d00b9daca9ee85c1cccbc90c",
+    "height": 2,
+    "body": {
+      "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+      "star": {
+        "dec": "68\u00b0 52' 56.9",
+        "ra": "16h 29m 1.0s",
+        "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
+        "storyDecoded": "Found star using https:\/\/www.google.com\/sky\/"
+      }
+    },
+    "time": "1556128162",
+    "previousBlockHash": "c9b900642693781c1a29be18c889a275e6c2b4f090bcd72b8a4a47cb02ad655e"
+  },
+  {
+    "hash": "0e7e1cefd682890bad8c3f403b037d4d8ba7d94d9be26a5094b1a181c716e269",
+    "height": 3,
+    "body": {
+      "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+      "star": {
+        "dec": "68\u00b0 52' 56.9",
+        "ra": "16h 29m 1.0s",
+        "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
+        "storyDecoded": "Found star using https:\/\/www.google.com\/sky\/"
+      }
+    },
+    "time": "1556131505",
+    "previousBlockHash": "b4eaa6fd4b1dfce5b90e5569a9d8076d00038e68d00b9daca9ee85c1cccbc90c"
+  }
+]
+```
+
+*GET /block/:blockHeight*
+
+```
+curl http://localhost:8000/block/1
+```
+
+Reponse:
+```
+{
+  "hash": "c9b900642693781c1a29be18c889a275e6c2b4f090bcd72b8a4a47cb02ad655e",
+  "height": 1,
+  "body": {
+    "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+    "star": {
+      "dec": "68\u00b0 52' 56.9",
+      "ra": "16h 29m 1.0s",
+      "story": "466f756e642073746172207573696e672068747470733a2f2f7777772e676f6f676c652e636f6d2f736b792f",
+      "storyDecoded": "Found star using https:\/\/www.google.com\/sky\/"
+    }
+  },
+  "time": "1556127968",
+  "previousBlockHash": "e2aabc11e76970ffef2264f62f5161c7b1051f249a5f33be844837b7f9d83bd4"
+}
+```
+
 
 ## What do I learned with this Project
 
 * I was able to write an API for my private block chain.
+* I understood how digital rights can be managed on a blockchain platform.

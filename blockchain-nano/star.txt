@@ -1,0 +1,8 @@
+{
+    "address": "19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
+    "star": {
+            "dec": "68° 52' 56.9",
+            "ra": "16h 29m 1.0s",
+            "story": "Found star using https://www.google.com/sky/"
+        }
+} 

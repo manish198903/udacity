@@ -2,6 +2,8 @@
 const express = require("express");
 //Importing BodyParser.js module
 const bodyParser = require("body-parser");
+//Importing express-timestamp module
+const time = require('express-timestamp');
 
 /**
  * Class Definition for the REST API
@@ -29,6 +31,7 @@ class BlockAPI {
      * Initialization of the middleware modules
      */
 	initExpressMiddleWare() {
+		this.app.use(time.init);
 		this.app.use(bodyParser.urlencoded({extended:true}));
 		this.app.use(bodyParser.json());
 	}
