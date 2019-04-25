@@ -162,6 +162,7 @@ class BlockController {
             body.star.story = Buffer(body.star.story).toString('hex');
 
             this.blockChain.addBlock(new Block.Block(body)).then((block) => {
+                self.mempool.removeValid(walletAddress);
                 block.body.star.storyDecoded = hex2ascii(block.body.star.story);
                 res.status(200).json(block);
             }); 
