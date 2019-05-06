@@ -12,7 +12,7 @@ curl -X POST \
   -H 'cache-control: no-cache' \
   -d '{
 "address":"19D61L7L1HDxGnSeTRi1CEhDt5pYj1pdqY",
- "signature":"H7rnz3k6fr5WydXgUBNLygcbJ+/PFtkQo53SZ5e7gOI7Pw6ddPB61yMbzLxYiM5bnRWoHrLf/ukfuwnx/4YVIUM="
+ "signature":"IEPLZufXbaTz6k8nvj2mBiE6No4jx6GqsMPw5hY76pvIAN4UtpLwEAVW0kC22b5iSAbKptj8Ionauxn/mrdl8Pg="
 }'
 
 curl -X POST \
